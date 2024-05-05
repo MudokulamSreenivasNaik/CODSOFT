@@ -1,0 +1,68 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class WordCounter {
+    public static void main(String[] args) {
+        // Prompt the user to enter text or provide a file
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter text or provide a file path: ");
+        String userInput = scanner.nextLine();
+
+        // Read the input text or file
+        String text = readInput(userInput);
+
+        // Split the string into an array of words using space or punctuation as delimiters
+        String[] words = text.split("[\\s\\p{Punct}]+");
+
+        // Initialize a counter variable to keep track of the number of words
+        int wordCount = 0;
+
+        // Map to store word frequency
+        Map<String, Integer> wordFrequency = new HashMap<>();
+
+        // Iterate through the array of words and increment the counter for each word encountered
+        for (String word : words) {
+            // Ignore empty strings
+            if (!word.isEmpty()) {
+                wordCount++;
+                // Update word frequency
+                String lowerCaseWord = word.toLowerCase();
+                wordFrequency.put(lowerCaseWord, wordFrequency.getOrDefault(lowerCaseWord, 0) + 1);
+            }
+        }
+
+        // Display the total count of words to the user
+        System.out.println("Total words: " + wordCount);
+
+        // Display word frequency
+        System.out.println("Word Frequency:");
+        for (Map.Entry<String, Integer> entry : wordFrequency.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    private static String readInput(String userInput) {
+        // Read from file if the input is a valid file path
+        File file = new File(userInput);
+        if (file.isFile()) {
+            return readFromFile(file);
+        }
+        // Otherwise, treat the input as text
+        return userInput;
+    }
+
+    private static String readFromFile(File file) {
+        StringBuilder content = new StringBuilder();
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                content.append(scanner.nextLine()).append("\n");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return content.toString();
+    }
+}
